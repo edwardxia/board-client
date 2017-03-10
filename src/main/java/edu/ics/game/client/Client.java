@@ -21,11 +21,8 @@ public class Client {
 		
 		socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
 			public void call(Object... args) {
-				try {
-					socket.emit("set", new JSONObject().put("name", "Someone"));
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
+				socket.emit("name", "Someone");
+
 
 				socket.emit("join", "room1");
 				socket.emit("list", "rooms");
