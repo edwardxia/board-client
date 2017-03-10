@@ -2,6 +2,7 @@ package edu.ics.game.client;
 
 import java.net.URISyntaxException;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,24 +22,35 @@ public class Client {
 		
 		socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
 			public void call(Object... args) {
+				socket.emit("state");
 				socket.emit("name", "Someone");
-
-
 				socket.emit("join", "room1");
-				socket.emit("list", "rooms");
+				socket.emit("ready", "room1");
+//				socket.emit("wait");
 				socket.emit("leave", "room1");
-
-
-//				socket.emit("joinRoom", "room2");
-//				socket.emit("leaveRoom", "room2");
+				socket.emit("state");
 //				socket.disconnect();
 			}
 		}).on("message", new Emitter.Listener() {
 			public void call(Object... args) {
+				System.out.println("-- System Message --");
 				System.out.println((String)args[0]);
 			}
-		}).on("rooms", new Emitter.Listener() {
+		}).on("chat", new Emitter.Listener() {
 			public void call(Object... args) {
+				System.out.println("-- Chat Message --");
+				JSONObject data = (JSONObject)args[0];
+				System.out.println(data.toString());			
+			}
+		}).on("lobby", new Emitter.Listener() {
+			public void call(Object... args) {
+				System.out.println("-- Lobby State --");
+				JSONArray data = (JSONArray)args[0];
+				System.out.println(data.toString());
+			}
+		}).on("room", new Emitter.Listener() {
+			public void call(Object... args) {
+				System.out.println("-- Room State --");
 				JSONObject data = (JSONObject)args[0];
 				System.out.println(data.toString());
 			}
