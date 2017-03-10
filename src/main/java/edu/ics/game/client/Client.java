@@ -25,10 +25,19 @@ public class Client {
 				socket.emit("state");
 				socket.emit("name", "Someone");
 				socket.emit("join", "room1");
-				socket.emit("ready", "room1");
+				socket.emit("ready");
+				
+				int[] move = {1, 1};
+				JSONObject data = new JSONObject();
+				try {
+					data.put("move", new JSONArray(move));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				socket.emit("play", data);
 //				socket.emit("wait");
-				socket.emit("leave", "room1");
-				socket.emit("state");
+//				socket.emit("leave", "room1");
+//				socket.emit("state");
 //				socket.disconnect();
 			}
 		}).on("message", new Emitter.Listener() {
