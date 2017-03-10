@@ -2,6 +2,7 @@ package edu.ics.game.client;
 
 import java.net.URISyntaxException;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.socket.client.IO;
@@ -20,9 +21,16 @@ public class Client {
 		
 		socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
 			public void call(Object... args) {
-				socket.emit("setName", "Test");
-				socket.emit("joinRoom", "room1");
-				socket.emit("listRooms");
+				try {
+					socket.emit("set", new JSONObject().put("name", "Someone"));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+
+				socket.emit("join", "room1");
+				socket.emit("list", "rooms");
+				socket.emit("leave", "room1");
+
 
 //				socket.emit("joinRoom", "room2");
 //				socket.emit("leaveRoom", "room2");
@@ -34,7 +42,7 @@ public class Client {
 			}
 		}).on("rooms", new Emitter.Listener() {
 			public void call(Object... args) {
-				JSONObject data = (JSONObject) args[0];
+				JSONObject data = (JSONObject)args[0];
 				System.out.println(data.toString());
 			}
 		}).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
