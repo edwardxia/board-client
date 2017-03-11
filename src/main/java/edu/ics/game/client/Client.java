@@ -67,6 +67,7 @@ public class Client {
 				// # This will send a move to the server.
 				// # moveData is a `JSONArray` of Integer of any length.
 				// # For TicTacToe it is just [x, y], and for Checkers it can be [oldX, oldY, newX, newY].
+				// # See the "play()" function at the bottom of this file for an exmaple.
 				
 				// # Players can input whenever they want. Server will count who's turn and ignore any invalid requests.
 				// # All players will receive "room" event with the updated game state once any player places a move.
