@@ -1,6 +1,8 @@
 package edu.ics.game.client;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import org.json.JSONArray;
@@ -59,6 +61,31 @@ public class Client {
 				System.out.println("-- Room State --");
 				JSONObject data = (JSONObject)args[0];
 				System.out.println(data.toString());
+				System.out.println();
+				
+				List<List<Integer>> board = new ArrayList<>();
+				
+				try {
+					JSONArray jsonBoard = data.getJSONObject("game").getJSONArray("board");
+					for (int i = 0; i < jsonBoard.length(); i++) {
+						board.add(new ArrayList<>());
+						JSONArray jsonRow = jsonBoard.getJSONArray(i);
+						for (int j = 0; j < jsonRow.length(); j++) {
+							board.get(i).add(jsonBoard.getJSONArray(i).getInt(j));
+						}
+					}
+				} catch (JSONException e1) {
+					e1.printStackTrace();
+				}
+				
+				for (int i = 0; i < board.size(); i++) {
+					for (int j = 0; j < board.get(i).size(); j++) {
+						System.out.printf("%2d ", board.get(i).get(j));
+					}
+					System.out.println("| " + i);
+				}
+				System.out.println("---------+");
+				System.out.println(" 0  1  2");
 
 				try {
 					if (data.get("status").equals("PLAYING")) {
