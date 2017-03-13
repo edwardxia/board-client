@@ -22,7 +22,9 @@ public class Client {
 		scanner = new Scanner(System.in);
 
 		try {
-			socket = IO.socket("http://localhost:3000/TicTacToe");
+			socket = IO.socket("http://localhost:3000/Othello");
+			// This demo client also support TacTicToe
+			// Edit the URL above to play TacTicToe
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
@@ -126,14 +128,27 @@ public class Client {
 					e1.printStackTrace();
 				}
 				
+				int width = 0;
 				for (int i = 0; i < board.size(); i++) {
+					width = board.get(i).size();
+
 					for (int j = 0; j < board.get(i).size(); j++) {
-						System.out.printf("%2d ", board.get(i).get(j));
+						int t = board.get(i).get(j);
+						if (t == -1) {
+							System.out.printf("  ");
+						} else if (t == 0) {
+							System.out.printf(" x");
+						} else if (t == 1) {
+							System.out.printf(" o");
+						}
 					}
 					System.out.println("| " + i);
 				}
-				System.out.println("---------+");
-				System.out.println(" 0  1  2");
+				System.out.println(String.format("%0" + (width * 2) + "d", 0).replace("0", "-"));
+				for (int i = 0; i < width; i++) {
+					System.out.printf("%2d", i);
+				}
+				System.out.println();
 
 				try {
 					if (data.get("status").equals("PLAYING")) {
