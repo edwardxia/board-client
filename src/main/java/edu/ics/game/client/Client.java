@@ -23,8 +23,8 @@ public class Client {
 
 		try {
 			socket = IO.socket("http://localhost:3000/Othello");
-			// This demo client also support TacTicToe
-			// Edit the URL above to play TacTicToe
+			// This demo client also support TicTacToe
+			// Edit the URL above to play TicTacToe
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
@@ -177,14 +177,14 @@ public class Client {
 		// In GUI this will not be a while loop,
 		// but an event listener
 		while (true) {
-			System.out.println("input x[space]y: ");
+			System.out.println("input row[space]column: ");
 			
 			int x = -1, y = -1;
-			x = scanner.nextInt();
 			y = scanner.nextInt();
+			x = scanner.nextInt();
 			scanner.nextLine();
 			
-			int[] move = {x, y};
+			int[] move = {y, x};
 			JSONObject movedata = new JSONObject();
 			try {
 				movedata.put("move", new JSONArray(move));
