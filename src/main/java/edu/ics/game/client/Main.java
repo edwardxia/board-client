@@ -26,13 +26,13 @@ public class Main extends Application{
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		try {
-			socket = IO.socket("http://localhost:3000/TicTacToe");
+			socket = IO.socket("http://localhost:3000/Othello");
 			// This demo client also support TicTacToe
 			// Edit the URL above to play TicTacToe
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
-		game = new TicTacToeGUI(socket);
+		game = new OthelloGUI(socket);
 		
 		System.out.println("Starting");
 		socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {

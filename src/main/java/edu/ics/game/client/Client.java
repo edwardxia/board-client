@@ -22,7 +22,7 @@ public class Client {
 		scanner = new Scanner(System.in);
 
 		try {
-			socket = IO.socket("http://169.234.51.68:3000/TicTacToe");
+			socket = IO.socket("http://localhost:3000/TicTacToe");
 			// This demo client also support TicTacToe
 			// Edit the URL above to play TicTacToe
 		} catch (URISyntaxException e) {
