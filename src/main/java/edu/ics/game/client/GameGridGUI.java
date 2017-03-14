@@ -1,5 +1,6 @@
 package edu.ics.game.client;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -23,22 +24,13 @@ public abstract class GameGridGUI {
 	protected Canvas canvas;
 
 	protected GameGridGUI(Socket socket) {
+		//Temporary for now. Need to move to the lobby interface 
 		this.socket = socket;
 	}
 	public abstract void updateBoard(List<List<Integer>> board);
+		//With the gameboard array update how the board looks like with the gui
 	public abstract void displayGameWindow(String gameName, int numOfCols, int numOfRows, Color backgroundColor, Color gridColor);
-	//Testing for now
-	int player = 1;
-	//
-	//Testing Purposes
-	public void switchTurn(){
-		if (player ==1 ){
-			player = 2;
-		}else{
-			player = 1;
-		}
-	}
-	//
+		//Create the window for the desired game
 
 	public Canvas createCanvas(Color color){
 		//Create canvas
@@ -53,9 +45,10 @@ public abstract class GameGridGUI {
 		//Draws the grid onto the canvas
 		this.numOfCols = numOfCols;
 		this.numOfRows = numOfRows;
-		boxWidth = ((int)canvas.getWidth())/numOfCols;
-		boxHeight = ((int)canvas.getHeight())/numOfRows;
+		boxWidth = (int)canvas.getWidth()/numOfCols;
+		boxHeight = (int)canvas.getHeight()/numOfRows;
 		GraphicsContext gc = canvas.getGraphicsContext2D();
+		
 		//Drawing the lines  
 		gc.setStroke(gridColor);
 		gc.setLineWidth(5);
@@ -76,6 +69,7 @@ public abstract class GameGridGUI {
 	}
 
 	public List<List<Integer>> getBoardState(JSONObject data){
+		//Extract the gameboard array from the Server's json object.
 		List<List<Integer>> board = new ArrayList<>();
 		try {
 			JSONArray jsonBoard = data.getJSONObject("game").getJSONArray("board");
@@ -93,8 +87,10 @@ public abstract class GameGridGUI {
 	}
 
 	public void sendInput(MouseEvent e){
+		// Transfer a chosen box input to the server.
 		JSONObject moveData = new JSONObject();
-		List<Integer> move = getIndexOfBox(e);
+		Coordinates index = getIndexOfBox(e);
+		List<Integer> move = new ArrayList<Integer>(Arrays.asList(index.row, index.column));
 		try {
 			moveData.put("move", new JSONArray(move));
 		} catch (JSONException err) {
@@ -112,69 +108,62 @@ public abstract class GameGridGUI {
 		createGrid(numOfCols, numOfRows, gridColor);
 	}
 
-	public List<Integer> getIndexOfBox(MouseEvent e){
-		List<Integer> coordinates = new ArrayList<Integer>();
+	public Coordinates getIndexOfBox(MouseEvent e){
+		// Returns the Coordinates of the location of the box. ex) row : 0 col: 1
+		int row = -1;
+		int col = -1;
 		for (int i = 0; i< numOfRows; i++){
 			if((i * boxHeight) < ((int)e.getY()) && ((int) e.getY()) < ((i+1) * boxHeight)){
-				coordinates.add(i);
+				row = i;
 			}
 		}
 		for (int i = 0; i < numOfCols; i++){
 			if((i * boxWidth) < ((int)e.getX()) && ((int) e.getX()) < ((i+1) * boxWidth)){
-				coordinates.add(i);
+				col = i;
 			}
 		}
-		return coordinates;
+		Coordinates index = new Coordinates(row, col);
+		return index;
 	}
 
-	public List<Integer> getTopLeftCorner(List<Integer> coordinates){
-		//Gets the coordinate of the top left of a box in the grid.
-		List<Integer> result = new ArrayList<Integer>();
-		int x = coordinates.get(0) * (boxWidth);
-		int y = coordinates.get(1) * (boxHeight);
-		result.add(x);
-		result.add(y);
-		return result;
+	public Coordinates getTopLeftCorner(Coordinates index){
+		//Gets the coordinates of the top left of a chosen box in the grid of a canvas. Ex) row: 124 col : 234
+		int x = index.column * (boxWidth);
+		int y = index.row * (boxHeight);
+		Coordinates topLeft = new Coordinates(x,y);
+		return topLeft;
 	}
 
-	public List<Integer> getTopRightCorner(List<Integer> coordinates){
-		//Gets the coordinate of the top right of a box in the grid.
-		List<Integer> result = new ArrayList<Integer>();
-		int x = (coordinates.get(0) + 1) * (boxWidth);
-		int y = coordinates.get(1) * (boxHeight);
-		result.add(x);
-		result.add(y);
-		return result;
+	public Coordinates getTopRightCorner(Coordinates index){
+		//Gets the coordinate of the top right of a box in the grid of a canvas. Ex) row: 124 col : 234
+		int x = (index.column + 1) * (boxWidth);
+		int y = index.row * (boxHeight);
+		Coordinates topRight = new Coordinates(x,y);
+		return topRight;
 	}
 
-	public List<Integer> getBottomRightCorner(List<Integer> coordinates){
-		//Gets the coordinate of the bottom right of a box in the grid.
-		List<Integer> result = new ArrayList<Integer>();
-		int x = (coordinates.get(0) + 1) * (boxWidth);
-		int y = (coordinates.get(1) + 1) * (boxHeight);
-		result.add(x);
-		result.add(y);
-		return result;
+	public Coordinates getBottomRightCorner(Coordinates index){
+		//Gets the coordinate of the bottom right of a box in the grid of a canvas. Ex) row: 124 col : 234
+		int x = (index.column + 1) * (boxWidth);
+		int y = (index.row + 1) * (boxHeight);
+		Coordinates bottomRight = new Coordinates(x,y);
+		return bottomRight;
 	} 
 
-	public List<Integer> getBottomLeftCorner(List<Integer> coordinates){
-		//Gets the coordinate of the bottom left of a box in the grid.
-		List<Integer> result = new ArrayList<Integer>();
-		int x = coordinates.get(0) * (boxWidth);
-		int y = (coordinates.get(1) + 1) * (boxHeight);
-		result.add(x);
-		result.add(y);
-		return result;
+	public Coordinates getBottomLeftCorner(Coordinates coordinates){
+		//Gets the coordinate of the bottom left of a box in the grid of a canvas. Ex) row: 124 col : 234
+		int x = coordinates.column * (boxWidth);
+		int y = (coordinates.row + 1) * (boxHeight);
+		Coordinates bottomLeft = new Coordinates(x,y);
+		return bottomLeft;
 	} 
 
-	public List<Integer> getCenter(List<Integer> coordinates){
-		//Gets the coordinate of the center of a box in the grid.
-		List<Integer> result = new ArrayList<Integer>();
-		int x = (coordinates.get(0) + 1) * (boxWidth/2);
-		int y = (coordinates.get(1) + 1) * (boxHeight/2);
-		result.add(x);
-		result.add(y);
-		return result;
+	public Coordinates getCenter(Coordinates coordinates){
+		//Gets the coordinate of the center of a box in the grid of a canvas. Ex) row: 124 col : 234
+		int x = (coordinates.column + 1) * (boxWidth/2);
+		int y = (coordinates.row + 1) * (boxHeight/2);
+		Coordinates center = new Coordinates(x,y);
+		return center;
 	}
 
 }

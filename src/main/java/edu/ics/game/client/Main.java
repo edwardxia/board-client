@@ -26,7 +26,7 @@ public class Main extends Application{
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		try {
-			socket = IO.socket("http://localhost:3000/Othello");
+			socket = IO.socket("http://localhost:3000/TicTacToe");
 			// This demo client also support TicTacToe
 			// Edit the URL above to play TicTacToe
 		} catch (URISyntaxException e) {

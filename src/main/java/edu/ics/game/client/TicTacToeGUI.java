@@ -1,13 +1,10 @@
 package edu.ics.game.client;
-import java.util.ArrayList;
 import java.util.List;
 
 import io.socket.client.Socket;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -15,14 +12,14 @@ import javafx.stage.Stage;
 
 public class TicTacToeGUI extends GameGridGUI {
 
-	private Color colorOfBackground = Color.GREEN;
-	private Color colorOfX = Color.WHITE;
-	private Color colorOfCircle = Color.RED;
-	private Color colorOfGrid = Color.YELLOW;
+	private Color colorOfBackground = Color.WHITE;
+	private Color colorOfX = Color.BLACK;
+	private Color colorOfCircle = Color.BLACK;
+	private Color colorOfGrid = Color.BLACK;
 
 	public TicTacToeGUI(Socket socket){
 		super(socket);
-		displayGameWindow("Tic Tac Toe", 8, 8, colorOfBackground, colorOfGrid);
+		displayGameWindow("Tic Tac Toe", 3, 3, colorOfBackground, colorOfGrid);
 	}
 
 	public void displayGameWindow(String gameName, int numOfCols, int numOfRows, Color backgroundColor, Color gridColor){
@@ -38,17 +35,18 @@ public class TicTacToeGUI extends GameGridGUI {
 			sendInput(e);
 		});
 
-		//Making Reset button
-		Button resetButton = new Button("Reset Game");
-		//Assign function to the button;
-		resetButton.setOnAction(e -> {
-			reset(backgroundColor, gridColor);
-			createGrid(numOfCols, numOfRows, gridColor);
-		});
-
-		///Place button on the top side of window layout
-		windowLayout.setTop(resetButton);
-		windowLayout.setAlignment(resetButton, Pos.TOP_CENTER);
+//		//Making Reset button
+		// Unecessary because not in sync with server side
+//		Button resetButton = new Button("Reset Game");
+//		//Assign function to the button;
+//		resetButton.setOnAction(e -> {
+//			reset(backgroundColor, gridColor);
+//			createGrid(numOfCols, numOfRows, gridColor);
+//		});
+//
+//		///Place button on the top side of window layout
+//		windowLayout.setTop(resetButton);
+//		windowLayout.setAlignment(resetButton, Pos.TOP_CENTER);
 
 		//Add the Grid background to layout
 		windowLayout.setCenter(canvas);
@@ -68,44 +66,37 @@ public class TicTacToeGUI extends GameGridGUI {
 	
 	public void updateBoard(List<List<Integer>> board){
 		this.reset();
-		GraphicsContext gc = canvas.getGraphicsContext2D();
 		for (int row = 0; row < board.size(); row++) {
 			for (int column = 0; column < board.get(row).size(); column++) {
 				int t = board.get(row).get(column);
+				Coordinates index = new Coordinates (row, column);
 				if (t == 0) {
-					displayX(row, column);
+					displayX(index);
 				} else if (t == 1) {
-					displayCircle(row, column);
+					displayCircle(index);
 				}
 			}
 		}
-
 	}
 
-	public void displayCircle(int row, int col){
+	public void displayCircle(Coordinates index){
 		///Display's a circle token
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		gc.setStroke(colorOfCircle);
-		List<Integer> coordinates = new ArrayList<Integer>();
-		coordinates.add(col);
-		coordinates.add(row);
-		List<Integer> topLeft = getTopLeftCorner(coordinates);
-		gc.strokeOval(topLeft.get(0), topLeft.get(1), boxWidth, boxHeight);
+		Coordinates topLeft = getTopLeftCorner(index);
+		gc.strokeOval(topLeft.row, topLeft.column, boxWidth, boxHeight);
 	}
 
-	public void displayX(int row, int col){
+	public void displayX(Coordinates index){
 		//Display's a X token
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		gc.setStroke(colorOfX);
-		List<Integer> coordinates = new ArrayList<Integer>();
-		coordinates.add(col);
-		coordinates.add(row);
-		List<Integer> topLeft = getTopLeftCorner(coordinates);
-		List<Integer> bottomRight = getBottomRightCorner(coordinates);
-		gc.strokeLine(topLeft.get(0), topLeft.get(1), bottomRight.get(0), bottomRight.get(1));
-		List<Integer> topRight = getTopRightCorner(coordinates);
-		List<Integer> bottomLeft = getBottomLeftCorner(coordinates);
-		gc.strokeLine(topRight.get(0), topRight.get(1), bottomLeft.get(0), bottomLeft.get(1));
+		Coordinates topLeft = getTopLeftCorner(index);
+		Coordinates bottomRight = getBottomRightCorner(index);
+		gc.strokeLine(topLeft.row, topLeft.column, bottomRight.row, bottomRight.column);
+		Coordinates topRight = getTopRightCorner(index);
+		Coordinates bottomLeft = getBottomLeftCorner(index);
+		gc.strokeLine(topRight.row, topRight.column, bottomLeft.row, bottomLeft.column);
 
 	}
 
