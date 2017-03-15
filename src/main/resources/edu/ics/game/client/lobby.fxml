@@ -17,7 +17,7 @@
 			<top>
 				<HBox spacing="10.0" BorderPane.alignment="CENTER">
 					<children>
-						<Button mnemonicParsing="false" onAction="#back" text="Back">
+						<Button mnemonicParsing="false" onAction="#back" text="Disconnect">
 							<HBox.margin>
 								<Insets />
 							</HBox.margin>

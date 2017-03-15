@@ -16,6 +16,19 @@ public class GameRoomController extends Controller {
 		// TODO Auto-generated method stub
 
 	}
+	
+	public void leave() {
+		this.app.getSocket().emit("leave");
+		this.app.showGameLobby();
+	}
+	
+	public void hold() {
+		this.app.getSocket().emit("wait");
+	}
+
+	public void ready() {
+		this.app.getSocket().emit("ready");
+	}
 
 	public void updateState(JSONObject data) {
 		System.out.println("-- Room State --");
