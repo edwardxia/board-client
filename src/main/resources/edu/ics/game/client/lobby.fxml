@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.ics.game.client.GameLobbyController">
+	<children>
+		<BorderPane>
+			<top>
+				<HBox spacing="10.0" BorderPane.alignment="CENTER">
+					<children>
+						<Button mnemonicParsing="false" onAction="#back" text="Back">
+							<HBox.margin>
+								<Insets />
+							</HBox.margin>
+						</Button>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="username" promptText="username" />
+                  <Button mnemonicParsing="false" onAction="#name" text="Update" />
+					</children>
+					<BorderPane.margin>
+						<Insets bottom="20.0" />
+					</BorderPane.margin>
+				</HBox>
+			</top>
+			<padding>
+				<Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+			</padding>
+			<bottom>
+				<HBox spacing="10.0" BorderPane.alignment="CENTER">
+					<BorderPane.margin>
+						<Insets top="20.0" />
+					</BorderPane.margin>
+					<children>
+						<TextField fx:id="roomName" promptText="room" />
+						<Button mnemonicParsing="false" onAction="#join" text="Join" />
+					</children>
+				</HBox>
+			</bottom>
+			<center>
+				<TableView fx:id="playerTable" BorderPane.alignment="CENTER">
+					<placeholder>
+						<Label text="No player found." />
+					</placeholder>
+					<columns>
+						<TableColumn fx:id="playerNameColumn" editable="false" maxWidth="200.0" minWidth="120.0" prefWidth="120.0" text="Player" />
+						<TableColumn fx:id="playerStatusColumn" editable="false" maxWidth="200.0" minWidth="120.0" prefWidth="120.0" text="Status" />
+					</columns>
+				</TableView>
+			</center>
+			<left>
+				<TableView fx:id="roomTable" BorderPane.alignment="CENTER">
+					<placeholder>
+						<Label text="No room found." />
+					</placeholder>
+					<columns>
+						<TableColumn fx:id="roomNameColumn" editable="false" maxWidth="200.0" minWidth="120.0" prefWidth="120.0" text="Room" />
+						<TableColumn fx:id="roomStatusColumn" editable="false" maxWidth="200.0" minWidth="120.0" prefWidth="120.0" text="Status" />
+					</columns>
+				</TableView>
+			</left>
+		</BorderPane>
+	</children>
+</AnchorPane>
