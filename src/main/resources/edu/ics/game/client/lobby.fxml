@@ -11,7 +11,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.ics.game.client.GameLobbyController">
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.111"
+	xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.ics.game.client.GameLobbyController">
 	<children>
 		<BorderPane>
 			<top>
@@ -22,9 +23,9 @@
 								<Insets />
 							</HBox.margin>
 						</Button>
-                  <Region HBox.hgrow="ALWAYS" />
-                  <TextField fx:id="username" promptText="username" />
-                  <Button mnemonicParsing="false" onAction="#name" text="Update" />
+						<Region HBox.hgrow="ALWAYS" />
+						<TextField fx:id="username" promptText="username" />
+						<Button mnemonicParsing="false" onAction="#name" text="Update" />
 					</children>
 					<BorderPane.margin>
 						<Insets bottom="20.0" />
@@ -35,13 +36,15 @@
 				<Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
 			</padding>
 			<bottom>
-				<HBox spacing="10.0" BorderPane.alignment="CENTER">
+				<HBox alignment="CENTER_LEFT" spacing="10.0"
+					BorderPane.alignment="CENTER">
 					<BorderPane.margin>
 						<Insets top="20.0" />
 					</BorderPane.margin>
 					<children>
 						<TextField fx:id="roomName" promptText="room" />
 						<Button mnemonicParsing="false" onAction="#join" text="Join" />
+						<Label text="Room will be created if not exists." />
 					</children>
 				</HBox>
 			</bottom>
@@ -51,8 +54,10 @@
 						<Label text="No player found." />
 					</placeholder>
 					<columns>
-						<TableColumn fx:id="playerNameColumn" editable="false" maxWidth="200.0" minWidth="120.0" prefWidth="120.0" text="Player" />
-						<TableColumn fx:id="playerStatusColumn" editable="false" maxWidth="200.0" minWidth="120.0" prefWidth="120.0" text="Status" />
+						<TableColumn fx:id="playerNameColumn" editable="false"
+							maxWidth="200.0" minWidth="120.0" prefWidth="120.0" text="Player" />
+						<TableColumn fx:id="playerStatusColumn" editable="false"
+							maxWidth="200.0" minWidth="120.0" prefWidth="120.0" text="Status" />
 					</columns>
 				</TableView>
 			</center>
@@ -62,8 +67,10 @@
 						<Label text="No room found." />
 					</placeholder>
 					<columns>
-						<TableColumn fx:id="roomNameColumn" editable="false" maxWidth="200.0" minWidth="120.0" prefWidth="120.0" text="Room" />
-						<TableColumn fx:id="roomStatusColumn" editable="false" maxWidth="200.0" minWidth="120.0" prefWidth="120.0" text="Status" />
+						<TableColumn fx:id="roomNameColumn" editable="false"
+							maxWidth="200.0" minWidth="120.0" prefWidth="120.0" text="Room" />
+						<TableColumn fx:id="roomStatusColumn" editable="false"
+							maxWidth="200.0" minWidth="120.0" prefWidth="120.0" text="Status" />
 					</columns>
 				</TableView>
 			</left>

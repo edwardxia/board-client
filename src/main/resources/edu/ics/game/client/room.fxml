@@ -8,29 +8,31 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.ics.game.client.GameRoomController">
-   <children>
-      <BorderPane>
-         <top>
-            <HBox spacing="10.0" BorderPane.alignment="CENTER">
-               <children>
-                  <Button mnemonicParsing="false" onAction="#leave" text="Leave" />
-                  <Region HBox.hgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" onAction="#hold" text="Wait" />
-                  <Button mnemonicParsing="false" onAction="#ready" text="Ready" />
-               </children>
-               <BorderPane.margin>
-                  <Insets bottom="20.0" />
-               </BorderPane.margin>
-            </HBox>
-         </top>
-         <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-         </padding>
-         <left>
-            <GridPane fx:id="gridPane" gridLinesVisible="true" prefHeight="480.0" prefWidth="480.0" BorderPane.alignment="CENTER">
-            </GridPane>
-         </left>
-      </BorderPane>
-   </children>
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.111"
+	xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.ics.game.client.GameRoomController">
+	<children>
+		<BorderPane>
+			<top>
+				<HBox spacing="10.0" BorderPane.alignment="CENTER">
+					<children>
+						<Button mnemonicParsing="false" onAction="#leave" text="Leave" />
+						<Region HBox.hgrow="ALWAYS" />
+						<Button mnemonicParsing="false" onAction="#hold" text="Wait" />
+						<Button mnemonicParsing="false" onAction="#ready" text="Ready" />
+					</children>
+					<BorderPane.margin>
+						<Insets bottom="20.0" />
+					</BorderPane.margin>
+				</HBox>
+			</top>
+			<padding>
+				<Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+			</padding>
+			<left>
+				<GridPane fx:id="gridPane" gridLinesVisible="true"
+					prefHeight="480.0" prefWidth="480.0" BorderPane.alignment="CENTER">
+				</GridPane>
+			</left>
+		</BorderPane>
+	</children>
 </AnchorPane>
