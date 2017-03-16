@@ -12,9 +12,7 @@ import org.json.JSONObject;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -23,13 +21,12 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 
 public class GameRoomController extends Controller {
-
+	private GamePieceFactory game = null;
 	private boolean gridInitialized = false;
 	private List<List<Pane>> panes = new ArrayList<>();
 
 	@FXML
 	private GridPane gridPane;
-
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -49,6 +46,21 @@ public class GameRoomController extends Controller {
 		this.app.getSocket().emit("ready");
 	}
 
+	public void initializeGame(String name) {
+		if (game == null) {
+			for (Class<? extends GamePieceFactory> gameClass : GamePieceFactory.AVAILABLE_GAMES) {
+				if (gameClass.getSimpleName().equals(name)) {
+					try {
+						game = gameClass.newInstance();
+						String style = (String) gameClass.getField("style").get(null);
+						gridPane.setStyle(style);
+					} catch (InstantiationException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+					}
+				}
+			}
+		}
+	}
+
 	public void initializeGrid(int height, int width) {
 		if (!gridInitialized) {
 			for (int i = 0 ; i < width ; i++) {
@@ -66,7 +78,6 @@ public class GameRoomController extends Controller {
 				panes.add(new ArrayList<>());
 				for (int column = 0; column < width; column++) {
 					Pane pane = new Pane();
-					pane.setPadding(new Insets(10));
 					pane.setOnMouseClicked(new EventHandler<MouseEvent>() {
 						@Override
 						public void handle(MouseEvent event) {
@@ -95,8 +106,10 @@ public class GameRoomController extends Controller {
 		}
 		app.getSocket().emit("play", moveData);
 	}
-	
+
 	public void updateState(JSONObject data) {
+		debug(data);
+		
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -106,65 +119,70 @@ public class GameRoomController extends Controller {
 					int width = jsonGame.getInt("width");
 
 					initializeGrid(height, width);
+					initializeGame(jsonGame.getString("name"));
 
 					JSONArray jsonBoard = jsonGame.getJSONArray("board");
 					for (int row = 0; row < height; row++) {
 
 						JSONArray jsonRow = jsonBoard.getJSONArray(row);
 						for (int column = 0; column < width; column++) {
-							Label label = new Label("" + jsonRow.getInt(column));
 							panes.get(row).get(column).getChildren().clear();
-							panes.get(row).get(column).getChildren().add(label);
+
+							Node piece = game.createPiece(jsonRow.getInt(column));
+							if (piece != null) {
+								piece.setMouseTransparent(true);
+								panes.get(row).get(column).getChildren().add(piece);
+							}
 						}
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-
-				System.out.println("-- Room State --");
-				System.out.println(data.toString());
-				System.out.println();
-
-				gridPane.setStyle("-fx-border-color: black; -fx-background-color: green;");
-
-				List<List<Integer>> board = new ArrayList<>();
-
-				try {
-					JSONArray jsonBoard = data.getJSONObject("game").getJSONArray("board");
-					for (int i = 0; i < jsonBoard.length(); i++) {
-						board.add(new ArrayList<>());
-						JSONArray jsonRow = jsonBoard.getJSONArray(i);
-						for (int j = 0; j < jsonRow.length(); j++) {
-							board.get(i).add(jsonBoard.getJSONArray(i).getInt(j));
-						}
-					}
-				} catch (JSONException e1) {
-					e1.printStackTrace();
-				}
-
-				int width = 0;
-				for (int i = 0; i < board.size(); i++) {
-					width = board.get(i).size();
-
-					for (int j = 0; j < board.get(i).size(); j++) {
-						int t = board.get(i).get(j);
-						if (t == -1) {
-							System.out.printf("  ");
-						} else if (t == 0) {
-							System.out.printf(" x");
-						} else if (t == 1) {
-							System.out.printf(" o");
-						}
-
-					}
-					System.out.println("| " + i);
-				}
-				System.out.println(String.format("%0" + (width * 2) + "d", 0).replace("0", "-"));
-				for (int i = 0; i < width; i++) {
-					System.out.printf("%2d", i);
-				}
-				System.out.println();	
 			}
 		});
+	}
+	
+	private void debug(JSONObject data) {
+		System.out.println("-- Room State --");
+		System.out.println(data.toString());
+		System.out.println();
+
+		List<List<Integer>> board = new ArrayList<>();
+
+		try {
+			JSONArray jsonBoard = data.getJSONObject("game").getJSONArray("board");
+			for (int i = 0; i < jsonBoard.length(); i++) {
+				board.add(new ArrayList<>());
+				JSONArray jsonRow = jsonBoard.getJSONArray(i);
+				for (int j = 0; j < jsonRow.length(); j++) {
+					board.get(i).add(jsonBoard.getJSONArray(i).getInt(j));
+				}
+			}
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+
+		int width = 0;
+		for (int i = 0; i < board.size(); i++) {
+			width = board.get(i).size();
+
+			for (int j = 0; j < board.get(i).size(); j++) {
+				int t = board.get(i).get(j);
+				if (t == -1) {
+					System.out.printf("  ");
+				} else if (t == 0) {
+					System.out.printf(" x");
+				} else if (t == 1) {
+					System.out.printf(" o");
+				}
+
+			}
+			System.out.println("| " + i);
+		}
+		System.out.println(String.format("%0" + (width * 2) + "d", 0).replace("0", "-"));
+		for (int i = 0; i < width; i++) {
+			System.out.printf("%2d", i);
+		}
+		System.out.println();	
 	}
 }

@@ -26,6 +26,7 @@ public class App extends Application {
 			} catch (Exception e) {}
 			System.exit(0);
 		});
+		primaryStage.setResizable(false);
 
 		this.primaryStage = primaryStage;
 		this.showLogin();

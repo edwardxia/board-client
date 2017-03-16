@@ -2,6 +2,7 @@ package edu.ics.game.client;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -30,9 +31,9 @@ public class LoginController extends Controller {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		this.namespace.setItems(FXCollections.observableArrayList(
-				"TicTacToe",
-				"Othello",
-				"Checkers"
+				GamePieceFactory.AVAILABLE_GAMES.stream()
+				.map(el -> el.getSimpleName())
+				.collect(Collectors.toList())
 				));
 		this.namespace.setValue(this.namespace.getItems().get(0));
 	}
