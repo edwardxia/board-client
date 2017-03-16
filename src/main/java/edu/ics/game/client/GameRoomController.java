@@ -61,33 +61,33 @@ public class GameRoomController extends Controller {
 		}
 	}
 
-	public void initializeGrid(int height, int width) {
+	public void initializeGrid(int columns, int rows) {
 		if (!gridInitialized) {
-			for (int i = 0 ; i < width ; i++) {
+			for (int i = 0 ; i < columns ; i++) {
 				ColumnConstraints colConstraints = new ColumnConstraints();
 				colConstraints.setHgrow(Priority.SOMETIMES);
 				gridPane.getColumnConstraints().add(colConstraints);
 			}
 
-			for (int i = 0 ; i < height ; i++) {
+			for (int i = 0 ; i < rows ; i++) {
 				RowConstraints rowConstraints = new RowConstraints();
 				rowConstraints.setVgrow(Priority.SOMETIMES);
 				gridPane.getRowConstraints().add(rowConstraints);
 			}
-			for (int row = 0; row < height; row++) {
+			for (int column = 0; column < columns; column++) {
 				panes.add(new ArrayList<>());
-				for (int column = 0; column < width; column++) {
+				for (int row = 0; row < rows; row++) {
 					Pane pane = new Pane();
 					pane.setOnMouseClicked(new EventHandler<MouseEvent>() {
 						@Override
 						public void handle(MouseEvent event) {
 							int column = GridPane.getColumnIndex((Node) event.getTarget());
 							int row = GridPane.getRowIndex((Node) event.getTarget());
-							play(row, column);
+							play(column, row);
 						}
 					});
 					gridPane.add(pane, column, row);
-					panes.get(row).add(pane);
+					panes.get(column).add(pane);
 				}
 			}
 			gridInitialized = true;
@@ -108,30 +108,29 @@ public class GameRoomController extends Controller {
 	}
 
 	public void updateState(JSONObject data) {
-		debug(data);
-		
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
 				try {
 					JSONObject jsonGame = data.getJSONObject("game");
-					int height = jsonGame.getInt("height");
-					int width = jsonGame.getInt("width");
+					int rows = jsonGame.getInt("height");
+					int columns = jsonGame.getInt("width");
 
-					initializeGrid(height, width);
+					initializeGrid(columns, rows);
 					initializeGame(jsonGame.getString("name"));
 
 					JSONArray jsonBoard = jsonGame.getJSONArray("board");
-					for (int row = 0; row < height; row++) {
+					for (int column = 0; column < columns; column++) {
 
-						JSONArray jsonRow = jsonBoard.getJSONArray(row);
-						for (int column = 0; column < width; column++) {
-							panes.get(row).get(column).getChildren().clear();
+						JSONArray jsonRow = jsonBoard.getJSONArray(column);
+						for (int row = 0; row < rows; row++) {
 
-							Node piece = game.createPiece(jsonRow.getInt(column), row, column);
+							panes.get(column).get(row).getChildren().clear();
+
+							Node piece = game.createPiece(jsonRow.getInt(row), column, row);
 							if (piece != null) {
 								piece.setMouseTransparent(true);
-								panes.get(row).get(column).getChildren().add(piece);
+								panes.get(column).get(row).getChildren().add(piece);
 							}
 						}
 					}
@@ -140,49 +139,5 @@ public class GameRoomController extends Controller {
 				}
 			}
 		});
-	}
-	
-	private void debug(JSONObject data) {
-		System.out.println("-- Room State --");
-		System.out.println(data.toString());
-		System.out.println();
-
-		List<List<Integer>> board = new ArrayList<>();
-
-		try {
-			JSONArray jsonBoard = data.getJSONObject("game").getJSONArray("board");
-			for (int i = 0; i < jsonBoard.length(); i++) {
-				board.add(new ArrayList<>());
-				JSONArray jsonRow = jsonBoard.getJSONArray(i);
-				for (int j = 0; j < jsonRow.length(); j++) {
-					board.get(i).add(jsonBoard.getJSONArray(i).getInt(j));
-				}
-			}
-		} catch (JSONException e1) {
-			e1.printStackTrace();
-		}
-
-		int width = 0;
-		for (int i = 0; i < board.size(); i++) {
-			width = board.get(i).size();
-
-			for (int j = 0; j < board.get(i).size(); j++) {
-				int t = board.get(i).get(j);
-				if (t == -1) {
-					System.out.printf("  ");
-				} else if (t == 0) {
-					System.out.printf(" x");
-				} else if (t == 1) {
-					System.out.printf(" o");
-				}
-
-			}
-			System.out.println("| " + i);
-		}
-		System.out.println(String.format("%0" + (width * 2) + "d", 0).replace("0", "-"));
-		for (int i = 0; i < width; i++) {
-			System.out.printf("%2d", i);
-		}
-		System.out.println();	
 	}
 }
