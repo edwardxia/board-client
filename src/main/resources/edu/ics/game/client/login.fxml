@@ -68,7 +68,10 @@
             </Label>
          </top>
          <bottom>
-            <Button fx:id="login" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#login" text="Connect" BorderPane.alignment="CENTER" />
+            <Button fx:id="login" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#login" text="Connect" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets top="10.0" />
+               </BorderPane.margin></Button>
          </bottom>
       </BorderPane>
    </children>
