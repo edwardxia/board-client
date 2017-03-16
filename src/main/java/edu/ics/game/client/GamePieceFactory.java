@@ -13,5 +13,5 @@ public abstract class GamePieceFactory {
 			Checkers.class
 			));
 
-	public abstract Node createPiece(int piece);
+	public abstract Node createPiece(int piece, int row, int column);
 }

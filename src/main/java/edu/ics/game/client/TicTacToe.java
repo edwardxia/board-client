@@ -8,7 +8,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
 public class TicTacToe extends GamePieceFactory {
-	public Node createPiece(int piece) {
+	public Node createPiece(int piece, int row, int column) {
 		Group group = new Group();
 		
 		// A quick hack to ensure all have equal size.

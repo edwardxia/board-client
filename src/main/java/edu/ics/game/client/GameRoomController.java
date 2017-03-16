@@ -128,7 +128,7 @@ public class GameRoomController extends Controller {
 						for (int column = 0; column < width; column++) {
 							panes.get(row).get(column).getChildren().clear();
 
-							Node piece = game.createPiece(jsonRow.getInt(column));
+							Node piece = game.createPiece(jsonRow.getInt(column), row, column);
 							if (piece != null) {
 								piece.setMouseTransparent(true);
 								panes.get(row).get(column).getChildren().add(piece);
