@@ -42,7 +42,7 @@ public class GameLobbyController extends Controller {
 
 	@FXML
 	private TextField username;
-	
+
 	@FXML
 	private TextField roomName;
 
@@ -58,20 +58,20 @@ public class GameLobbyController extends Controller {
 		roomTable.setRowFactory(new Callback<TableView<Status>, TableRow<Status>>() {  
 			@Override
 			public TableRow<Status> call(TableView<Status> tableView) {
-	            final TableRow<Status> row = new TableRow<>();
-	            row.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {  
-	                @Override  
-	                public void handle(MouseEvent event) {  
-	                    final int index = row.getIndex();  
-	                    if (index >= 0 && index < tableView.getItems().size() && tableView.getSelectionModel().isSelected(index)  ) {
-	                        tableView.getSelectionModel().clearSelection();
-	                        event.consume();  
-	                    }  
-	                }  
-	            }); 
-	            return row;  
+				final TableRow<Status> row = new TableRow<>();
+				row.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent event) {
+						final int index = row.getIndex();
+						if (index >= 0 && index < tableView.getItems().size() && tableView.getSelectionModel().isSelected(index)) {
+							tableView.getSelectionModel().clearSelection();
+							event.consume();
+						}
+					}
+				});
+				return row;
 			}  
-	    });
+		});
 		roomTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 			if (newSelection != null) {
 				this.roomName.setText(newSelection.getName());
@@ -153,7 +153,7 @@ public class GameLobbyController extends Controller {
 			this.app.getSocket().emit("join", roomName);
 		}
 	}
-	
+
 	public void back() {
 		app.disconnect();
 	}
