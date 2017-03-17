@@ -24,6 +24,7 @@ public class GameRoomController extends Controller {
 	private GamePieceFactory game = null;
 	private boolean gridInitialized = false;
 	private List<List<Pane>> panes = new ArrayList<>();
+	private int playerIndex = -1;
 
 	@FXML
 	private GridPane gridPane;
@@ -133,6 +134,10 @@ public class GameRoomController extends Controller {
 								panes.get(column).get(row).getChildren().add(piece);
 							}
 						}
+					}
+
+					if (data.has("playerIndex")) {
+						playerIndex = data.getInt("playerIndex");
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
