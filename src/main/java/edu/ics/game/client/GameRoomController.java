@@ -114,8 +114,8 @@ public class GameRoomController extends Controller {
 			public void run() {
 				try {
 					JSONObject jsonGame = data.getJSONObject("game");
-					int rows = jsonGame.getInt("height");
-					int columns = jsonGame.getInt("width");
+					int rows = jsonGame.getInt("rows");
+					int columns = jsonGame.getInt("columns");
 
 					initializeGrid(columns, rows);
 					initializeGame(jsonGame.getString("name"));
