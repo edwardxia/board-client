@@ -2,6 +2,7 @@ package edu.ics.game.client;
 
 import java.net.URISyntaxException;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.socket.client.IO;
@@ -60,13 +61,12 @@ public class App extends Application {
 	public void showGameLobby() {
 		loadScene("lobby.fxml");
 		socket.emit("state");
-		primaryStage.setTitle("Lobby");
 		primaryStage.show();
 	}
-	
-	public void showGameRoom() {
+
+	public void showGameRoom(String roomName) {
 		loadScene("room.fxml");
-		primaryStage.setTitle("Room");
+		socket.emit("state", roomName);
 		primaryStage.show();
 	}
 
@@ -102,18 +102,44 @@ public class App extends Application {
 		}).on("lobby", new Emitter.Listener() {
 			public void call(Object... args) {
 				if (primaryController.getClass().equals(GameLobbyController.class)) {
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								primaryStage.setTitle(((JSONObject)args[0]).getString("name") + " - Lobby");
+							} catch (JSONException e) {
+								primaryStage.setTitle("Game - Lobby");
+							}
+						}
+					});
+
 					((GameLobbyController)primaryController).updateState((JSONObject)args[0]);
 				}
 			}
 		}).on("room", new Emitter.Listener() {
 			public void call(Object... args) {
 				if (primaryController.getClass().equals(GameRoomController.class)) {
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								String title = ((JSONObject)args[0]).getJSONObject("game").getString("name") + " - Room - " + ((JSONObject)args[0]).getString("name");
+								primaryStage.setTitle(title);
+							} catch (JSONException e) {
+								primaryStage.setTitle("Game - Room");
+							}
+						}
+					});
+
 					((GameRoomController)primaryController).updateState((JSONObject)args[0]);
 				} else if (primaryController.getClass().equals(GameLobbyController.class)) {
 					Platform.runLater(new Runnable() {
 						@Override
 						public void run() {
-							showGameRoom();
+							try {
+								showGameRoom(((JSONObject)args[0]).getString("name"));
+							} catch (JSONException e) {}
+
 							((GameRoomController)primaryController).updateState((JSONObject)args[0]);
 						}
 					});					
@@ -133,14 +159,14 @@ public class App extends Application {
 		});
 		this.socket.connect();
 	}
-	
+
 	public void disconnect() {
 		try {
 			this.socket.disconnect();
 			showLogin();
 		} catch (Exception e) {}
 	}
-	
+
 	public Socket getSocket() {
 		return socket;
 	}
