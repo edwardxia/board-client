@@ -18,9 +18,13 @@ public class Checkers extends GamePieceFactory{
 
 		if (piece >=0 && piece < 8) {
 			Circle circle = new Circle(30, 30, 25);
-			circle.setStrokeWidth(0);
+			if (piece / 4 == 1) {
+				circle.setStrokeWidth(3);
+			} else {
+				circle.setStrokeWidth(0);
+			}
 
-			if (piece / 4 == 0) {
+			if ((piece % 4) / 2 == 0) {
 				circle.setFill(Color.WHITE);
 				circle.setStroke(Color.BLACK);
 			} else {
@@ -28,16 +32,12 @@ public class Checkers extends GamePieceFactory{
 				circle.setStroke(Color.WHITE);
 			}
 
-			if (piece % 2 == 1) {
-				circle.setStrokeWidth(3);
-			}
-
 			pane.getChildren().add(circle);
 			
-			if ((piece % 4) / 2 == 1) {
+			if ((piece % 4) % 2 == 1) {
 				Text text = new Text("♔");
 				text.setFont(new Font(32));
-				text.setFill((piece / 4 == 0) ? Color.BLACK : Color.WHITE);
+				text.setFill(((piece % 4) / 2 == 0) ? Color.BLACK : Color.WHITE);
 				text.setBoundsType(TextBoundsType.VISUAL);
 				pane.getChildren().add(text);
 			}

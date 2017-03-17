@@ -8,9 +8,9 @@ import javafx.scene.Node;
 
 public abstract class GamePieceFactory {
 	public static final List<Class<? extends GamePieceFactory>> AVAILABLE_GAMES = new ArrayList<>(Arrays.asList(
-			TicTacToe.class,
+			Checkers.class,
 			Othello.class,
-			Checkers.class
+			TicTacToe.class
 			));
 
 	public abstract Node createPiece(int piece, int column, int row);
