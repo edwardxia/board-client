@@ -12,8 +12,12 @@ import org.json.JSONObject;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -24,14 +28,28 @@ public class GameRoomController extends Controller {
 	private GamePieceFactory game = null;
 	private boolean gridInitialized = false;
 	private List<List<Pane>> panes = new ArrayList<>();
+	private GameStatusController gameStatusController = null;
+	@SuppressWarnings("unused")
 	private int playerIndex = -1;
+
+	@FXML
+	private BorderPane borderPane;
 
 	@FXML
 	private GridPane gridPane;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
+		try {
+			FXMLLoader loader = new FXMLLoader(App.class.getResource("status.fxml"));
+			borderPane.setCenter(loader.load());
+			this.gameStatusController = (GameStatusController)loader.getController();
+			BorderPane.setMargin(this.gameStatusController.getTableView(), new Insets(0, 0, 0, 20));
+			this.gameStatusController.getTableView().getColumns().get(0).setText("Players");
+			this.gameStatusController.getTableView().setPlaceholder(new Label("No player in room"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void leave() {
@@ -134,6 +152,10 @@ public class GameRoomController extends Controller {
 								panes.get(column).get(row).getChildren().add(piece);
 							}
 						}
+					}
+
+					if (gameStatusController != null) {
+						gameStatusController.updateItems(data.getJSONArray("players"));
 					}
 
 					if (data.has("playerIndex")) {

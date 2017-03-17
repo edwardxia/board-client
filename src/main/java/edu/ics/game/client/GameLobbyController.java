@@ -7,38 +7,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
 
 public class GameLobbyController extends Controller {
 
 	@FXML
-	private TableView<Status> roomTable;
-
-	@FXML
-	private TableColumn<Status, String> roomNameColumn;
-
-	@FXML
-	private TableColumn<Status, String> roomStatusColumn;
-
-	@FXML
-	private TableView<Status> playerTable;
-
-	@FXML
-	private TableColumn<Status, String> playerNameColumn;
-
-	@FXML
-	private TableColumn<Status, String> playerStatusColumn;
+	private BorderPane borderPane;
 
 	@FXML
 	private TextField username;
@@ -47,96 +30,87 @@ public class GameLobbyController extends Controller {
 	private TextField roomName;
 
 	private JSONObject state;
-	private final ObservableList<Status> rooms = FXCollections.observableArrayList();
-	private final ObservableList<Status> players = FXCollections.observableArrayList();
+	private GameStatusController gameRoomStatusController = null;
+	private GameStatusController gamePlayerStatusController = null;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		roomNameColumn.setCellValueFactory(new PropertyValueFactory<Status,String>("name"));
-		roomStatusColumn.setCellValueFactory(new PropertyValueFactory<Status,String>("status"));
-		roomTable.setItems(rooms);
-		roomTable.setRowFactory(new Callback<TableView<Status>, TableRow<Status>>() {  
-			@Override
-			public TableRow<Status> call(TableView<Status> tableView) {
-				final TableRow<Status> row = new TableRow<>();
-				row.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent event) {
-						final int index = row.getIndex();
-						if (index >= 0 && index < tableView.getItems().size() && tableView.getSelectionModel().isSelected(index)) {
-							tableView.getSelectionModel().clearSelection();
-							event.consume();
+		try {
+			FXMLLoader roomStatusLoader = new FXMLLoader(App.class.getResource("status.fxml"));
+			borderPane.setLeft(roomStatusLoader.load());
+			this.gameRoomStatusController = (GameStatusController)roomStatusLoader.getController();
+			this.gameRoomStatusController.getTableView().getColumns().get(0).setText("Room");
+			this.gameRoomStatusController.getTableView().setPlaceholder(new Label("No room in lobby"));
+			this.gameRoomStatusController.getTableView().setRowFactory(new Callback<TableView<GameStatusController.Status>, TableRow<GameStatusController.Status>>() {  
+				@Override
+				public TableRow<GameStatusController.Status> call(TableView<GameStatusController.Status> tableView) {
+					final TableRow<GameStatusController.Status> row = new TableRow<>();
+					row.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+						@Override
+						public void handle(MouseEvent event) {
+							final int index = row.getIndex();
+							if (index >= 0 && index < tableView.getItems().size() && tableView.getSelectionModel().isSelected(index)) {
+								tableView.getSelectionModel().clearSelection();
+								event.consume();
+							}
 						}
-					}
-				});
-				return row;
-			}  
-		});
-		roomTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-			if (newSelection != null) {
-				this.roomName.setText(newSelection.getName());
-				updatePlayers(newSelection.getName());
-			} else {
-				updatePlayers();
-			}
-		});
+					});
+					return row;
+				}
+			});
+			this.gameRoomStatusController.getTableView().getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+				if (newSelection != null) {
+					this.roomName.setText(newSelection.getName());
+					updatePlayers(newSelection.getName());
+				} else {
+					updatePlayers();
+				}
+			});
 
-		playerNameColumn.setCellValueFactory(new PropertyValueFactory<Status,String>("name"));
-		playerStatusColumn.setCellValueFactory(new PropertyValueFactory<Status,String>("status"));
-		playerTable.setItems(players);
+			FXMLLoader playerStatusLoader = new FXMLLoader(App.class.getResource("status.fxml"));
+			borderPane.setCenter(playerStatusLoader.load());
+			this.gamePlayerStatusController = (GameStatusController)playerStatusLoader.getController();
+			this.gamePlayerStatusController.getTableView().getColumns().get(0).setText("Player");
+			this.gamePlayerStatusController.getTableView().setPlaceholder(new Label("No player in lobby"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void updateState(JSONObject data) {
 		this.state = data;
-		updateRooms();
-		updatePlayers();
+		this.updateRooms();
+		this.updatePlayers();
 	}
 
 	private void updateRooms() {
-		rooms.clear();
-
 		try {
-			JSONArray jsonRooms = state.getJSONArray("rooms");
-			for (int i = 0; i < jsonRooms.length(); i++) {
-				rooms.add(new Status(jsonRooms.getJSONObject(i)));
-			}
+			gameRoomStatusController.updateItems(state.getJSONArray("rooms"));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 
 	private void updatePlayers() {
-		updatePlayers(null);
+		try {
+			gamePlayerStatusController.updateItems(state.getJSONArray("players"));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void updatePlayers(String roomName) {
-		players.clear();
-
-		if (roomName == null) {
-			try {
-				JSONArray jsonPlayers = state.getJSONArray("players");
-				for (int i = 0; i < jsonPlayers.length(); i++) {
-					players.add(new Status(jsonPlayers.getJSONObject(i)));
+		try {
+			JSONArray jsonRooms = state.getJSONArray("rooms");
+			for (int i = 0; i < jsonRooms.length(); i++) {
+				JSONObject jsonRoom = jsonRooms.getJSONObject(i);
+				if (jsonRoom.getString("name").equals(roomName)) {
+					gamePlayerStatusController.updateItems(jsonRoom.getJSONArray("players"));
+					break;
 				}
-			} catch (JSONException e) {
-				e.printStackTrace();
 			}
-		} else {
-			try {
-				JSONArray jsonRooms = state.getJSONArray("rooms");
-				for (int i = 0; i < jsonRooms.length(); i++) {
-					JSONObject jsonRoom = jsonRooms.getJSONObject(i);
-					if (jsonRoom.getString("name").equals(roomName)) {
-						JSONArray jsonPlayers = jsonRoom.getJSONArray("players");
-						for (int j = 0; j < jsonPlayers.length(); j++) {
-							players.add(new Status(jsonPlayers.getJSONObject(j)));
-						}
-						break;
-					}
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -156,32 +130,5 @@ public class GameLobbyController extends Controller {
 
 	public void back() {
 		app.disconnect();
-	}
-
-	public static class Status {
-		private SimpleStringProperty name;
-		private SimpleStringProperty status;
-
-		private Status(JSONObject object) {
-			try {
-				this.name = new SimpleStringProperty(object.getString("name"));
-				this.status = new SimpleStringProperty(object.getString("status"));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-
-		private Status(String name, String status) {
-			this.name = new SimpleStringProperty(name);
-			this.status = new SimpleStringProperty(status);
-		}
-
-		public String getName() {
-			return name.get();
-		}
-
-		public String getStatus() {
-			return status.get();
-		}
 	}
 }
