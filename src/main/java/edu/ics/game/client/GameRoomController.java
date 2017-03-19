@@ -137,39 +137,79 @@ public class GameRoomController extends Controller {
 					JSONObject jsonGame = data.getJSONObject("game");
 					int rows = jsonGame.getInt("rows");
 					int columns = jsonGame.getInt("columns");
+					int bCount = 0;
+					int wCount = 0;
 
 					initializeGrid(columns, rows);
 					initializeGame(jsonGame.getString("name"));
-
 					JSONArray jsonBoard = jsonGame.getJSONArray("board");
+					System.out.println(jsonGame);
 					for (int column = 0; column < columns; column++) {
 
 						JSONArray jsonRow = jsonBoard.getJSONArray(column);
 						for (int row = 0; row < rows; row++) {
 
 							panes.get(column).get(row).getChildren().clear();
-
 							Node piece = game.createPiece(jsonRow.getInt(row), column, row);
 							if (piece != null) {
 								piece.setMouseTransparent(true);
 								panes.get(column).get(row).getChildren().add(piece);
 							}
+							if (data.getJSONObject("game").getString("name").equals("Othello")){
+								if (jsonRow.getInt(row) == 0) {
+									bCount += 1;
+								} else if (jsonRow.getInt(row) == 1) {
+									wCount += 1;
+								}
+							}
+							if (data.getJSONObject("game").getString("name").equals("Checkers")){
+								if (jsonRow.getInt(row) == 0 || jsonRow.getInt(row) == 4 || jsonRow.getInt(row) == 1) {
+									bCount += 1;
+								} else if (jsonRow.getInt(row) == 2 || jsonRow.getInt(row) == 6 || jsonRow.getInt(row) == 3) {
+									wCount += 1;
+								}
+							}
+							
 						}
 					}
+					
+					updateScore(data.getJSONObject("game").getString("name"), data, bCount, wCount);
 
 					if (gameStatusController != null) {
 						gameStatusController.updateItems(data.getJSONArray("players"));
 					}
-
 					if (data.has("playerIndex")) {
 						playerIndex = data.getInt("playerIndex");
 					}
-
-//					message.setText(" set a message ");
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 			}
 		});
+	}
+	
+	public void updateScore(String game, JSONObject data, int bScore, int wScore) {
+		try {
+			if (game.equals("Othello")) {
+				JSONArray players = data.getJSONArray("players");
+				if (players.length() == 2) {
+					message.setText(((players.getJSONObject(0).getString("name"))) + ": " + bScore+ "   " + 
+							players.getJSONObject(1).getString("name") + ": " + wScore);
+				} else {
+					message.setText("WAITING");
+				}
+			}
+			if (game.equals("Checkers")) {
+				JSONArray players = data.getJSONArray("players");
+				if (players.length() == 2) {
+					message.setText(((players.getJSONObject(0).getString("name"))) + ": " + bScore+ "   " + 
+							players.getJSONObject(1).getString("name") + ": " + wScore);
+				} else {
+					message.setText("WAITING");
+				}
+			}
+		}catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 }
