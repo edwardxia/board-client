@@ -31,7 +31,7 @@ public class LoginController extends Controller {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		this.namespace.setItems(FXCollections.observableArrayList(
-				GamePieceFactory.AVAILABLE_GAMES.stream()
+				Game.AVAILABLE_GAMES.stream()
 				.map(el -> el.getSimpleName())
 				.collect(Collectors.toList())
 				));

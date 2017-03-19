@@ -9,7 +9,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 
-public class Checkers extends GamePieceFactory {
+public class Checkers extends Game {
 	public Node createPiece(int piece, int column, int row) {
 		StackPane pane = new StackPane();
 		Rectangle background = new Rectangle(0, 0, 60, 60);

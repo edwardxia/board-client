@@ -6,8 +6,8 @@ import java.util.List;
 
 import javafx.scene.Node;
 
-public abstract class GamePieceFactory {
-	public static final List<Class<? extends GamePieceFactory>> AVAILABLE_GAMES = new ArrayList<>(Arrays.asList(
+public abstract class Game {
+	public static final List<Class<? extends Game>> AVAILABLE_GAMES = new ArrayList<>(Arrays.asList(
 			Checkers.class,
 			Othello.class,
 			TicTacToe.class

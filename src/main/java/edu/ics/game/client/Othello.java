@@ -4,7 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-public class Othello extends GamePieceFactory {
+public class Othello extends Game {
 	public static final String style = "-fx-border-color: black; -fx-background-color: green;";
 	
 	public Node createPiece(int piece, int column, int row) {

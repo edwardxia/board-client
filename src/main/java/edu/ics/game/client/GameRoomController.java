@@ -25,7 +25,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 
 public class GameRoomController extends Controller {
-	private GamePieceFactory game = null;
+	private Game game = null;
 	private boolean gridInitialized = false;
 	private List<List<Pane>> panes = new ArrayList<>();
 	private GameStatusController gameStatusController = null;
@@ -37,6 +37,9 @@ public class GameRoomController extends Controller {
 
 	@FXML
 	private GridPane gridPane;
+
+	@FXML
+	private Label message;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -67,7 +70,7 @@ public class GameRoomController extends Controller {
 
 	public void initializeGame(String name) {
 		if (game == null) {
-			for (Class<? extends GamePieceFactory> gameClass : GamePieceFactory.AVAILABLE_GAMES) {
+			for (Class<? extends Game> gameClass : Game.AVAILABLE_GAMES) {
 				if (gameClass.getSimpleName().equals(name)) {
 					try {
 						game = gameClass.newInstance();
@@ -161,6 +164,8 @@ public class GameRoomController extends Controller {
 					if (data.has("playerIndex")) {
 						playerIndex = data.getInt("playerIndex");
 					}
+
+//					message.setText(" set a message ");
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}

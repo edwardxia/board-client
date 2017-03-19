@@ -7,7 +7,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
-public class TicTacToe extends GamePieceFactory {
+public class TicTacToe extends Game {
 	public Node createPiece(int piece, int column, int row) {
 		Group group = new Group();
 		

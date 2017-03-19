@@ -12,4 +12,3 @@
 			maxWidth="200.0" minWidth="120.0" prefWidth="120.0" text="Status" />
 	</columns>
 </TableView>
-

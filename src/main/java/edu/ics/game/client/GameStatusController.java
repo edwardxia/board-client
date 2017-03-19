@@ -74,6 +74,10 @@ public class GameStatusController implements Initializable {
 			return name.get();
 		}
 
+		public void setStatus(String status) {
+			this.status = new SimpleStringProperty(status);
+		}
+
 		public String getStatus() {
 			return status.get();
 		}
