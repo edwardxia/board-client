@@ -186,8 +186,8 @@ public class GameRoomController extends Controller {
 						} else {
 							alertMessage = "You lose.";
 						}
-						displayAlert("Game Over", alertMessage);
 						playerIndex = -1;
+						displayAlert("Game Over", alertMessage);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
