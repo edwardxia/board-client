@@ -1,5 +1,9 @@
 package edu.ics.game.client;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -33,7 +37,7 @@ public class Checkers extends Game {
 			}
 
 			pane.getChildren().add(circle);
-			
+
 			if ((piece % 4) % 2 == 1) {
 				Text text = new Text("♔");
 				text.setFont(new Font(32));
@@ -44,5 +48,23 @@ public class Checkers extends Game {
 		}
 
 		return pane;
+	}
+
+	public String createMessage(JSONObject state) {
+		try {
+			if (!state.getString("status").equals("PLAYING")) {
+				return null;
+			}
+			JSONArray jsonPlayers = state.getJSONArray("players");
+			JSONArray jsonScore = state.getJSONObject("game").getJSONArray("score");
+			int[] score = new int[jsonScore.length()];
+			for (int i = 0; i < jsonScore.length(); i++) {
+				score[i] = jsonScore.getInt(i);
+			}
+			return "White (" + jsonPlayers.getJSONObject(0).getString("name") + "): " + score[0]+ " vs. Black (" + jsonPlayers.getJSONObject(1).getString("name") + "): " + score[1];
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

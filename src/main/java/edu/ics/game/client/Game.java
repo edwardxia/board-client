@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.json.JSONObject;
+
 import javafx.scene.Node;
 
 public abstract class Game {
@@ -14,4 +16,5 @@ public abstract class Game {
 			));
 
 	public abstract Node createPiece(int piece, int column, int row);
+	public abstract String createMessage(JSONObject state);
 }
