@@ -122,7 +122,15 @@ public class App extends Application {
 			}
 		}).on("room", new Emitter.Listener() {
 			public void call(Object... args) {
-				if (primaryController.getClass().equals(GameRoomController.class)) {
+				if (primaryController.getClass().equals(GameLobbyController.class)) {
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							loadGameRoom();
+							((GameRoomController)primaryController).updateState((JSONObject)args[0]);
+						}
+					});
+				} else if (primaryController.getClass().equals(GameRoomController.class)) {
 					Platform.runLater(new Runnable() {
 						@Override
 						public void run() {
@@ -136,18 +144,6 @@ public class App extends Application {
 					});
 
 					((GameRoomController)primaryController).updateState((JSONObject)args[0]);
-				} else if (primaryController.getClass().equals(GameLobbyController.class)) {
-					Platform.runLater(new Runnable() {
-						@Override
-						public void run() {
-							loadGameRoom();
-							((GameRoomController)primaryController).updateState((JSONObject)args[0]);
-
-							try {
-								socket.emit("state", ((JSONObject)args[0]).getString("name"));
-							} catch (JSONException e) {}
-						}
-					});					
 				}
 			}
 		}).on(Socket.EVENT_CONNECT_ERROR,  new Emitter.Listener() {
