@@ -186,7 +186,7 @@ public class GameRoomController extends Controller {
 						} else {
 							alertMessage = "You lose.";
 						}
-						AlertBox.display("Game Over", alertMessage);
+						displayAlert("Game Over", alertMessage);
 						playerIndex = -1;
 					}
 				} catch (JSONException e) {
@@ -196,27 +196,25 @@ public class GameRoomController extends Controller {
 		});
 	}
 
-	public static class AlertBox {
-		public static void display(String title, String message){
-			Stage window = new Stage();
-			window.setResizable(false);
-			window.setMinWidth(200);
-			window.initModality(Modality.APPLICATION_MODAL);
-			window.setTitle(title);
+	public void displayAlert(String title, String message) {
+		Stage window = new Stage();
+		window.setResizable(false);
+		window.setMinWidth(200);
+		window.initModality(Modality.APPLICATION_MODAL);
+		window.setTitle(title);
 
-			Label label = new Label();
-			label.setText(message);
-			Button closeButton = new Button("Ok");
-			closeButton.setOnAction(e -> window.close());
+		Label label = new Label();
+		label.setText(message);
+		Button closeButton = new Button("Ok");
+		closeButton.setOnAction(e -> window.close());
 
-			VBox layout = new VBox(10);
-			layout.setPadding(new Insets(20));
-			layout.getChildren().addAll(label, closeButton);
-			layout.setAlignment(Pos.CENTER);
+		VBox layout = new VBox(10);
+		layout.setPadding(new Insets(20));
+		layout.getChildren().addAll(label, closeButton);
+		layout.setAlignment(Pos.CENTER);
 
-			Scene scene = new Scene(layout);
-			window.setScene(scene);
-			window.showAndWait();
-		}
+		Scene scene = new Scene(layout);
+		window.setScene(scene);
+		window.showAndWait();
 	}
 }
