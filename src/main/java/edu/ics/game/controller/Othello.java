@@ -1,4 +1,4 @@
-package edu.ics.game.client;
+package edu.ics.game.controller;
 
 import org.json.JSONArray;
 import org.json.JSONException;
