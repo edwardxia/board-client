@@ -46,6 +46,9 @@ public class GameRoomController extends Controller {
 
 	@FXML
 	private Label message;
+	
+	@FXML
+	private Label turn;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -177,7 +180,12 @@ public class GameRoomController extends Controller {
 							
 						}
 					}
-					
+										
+					if (jsonGame.getInt("turn") == 0)
+						turn.setText("Turn: " + data.getJSONArray("players").getJSONObject(0).getString("name"));
+					else
+						turn.setText("Turn: " + data.getJSONArray("players").getJSONObject(1).getString("name"));
+						
 					updateScore(data.getJSONObject("game").getString("name"), data, bCount, wCount);
 
 					if (gameStatusController != null) {
