@@ -62,8 +62,8 @@ public class GameRoomController extends Controller {
 	}
 
 	public void leave() {
+		this.app.loadGameLobby();
 		this.app.getSocket().emit("leave");
-		this.app.showGameLobby();
 	}
 
 	public void hold() {

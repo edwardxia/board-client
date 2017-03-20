@@ -30,7 +30,8 @@ public class App extends Application {
 		primaryStage.setResizable(false);
 
 		this.primaryStage = primaryStage;
-		this.showLogin();
+		this.loadLogin();
+		this.primaryStage.show();
 	}
 
 	public static void main(String[] args) {
@@ -52,22 +53,17 @@ public class App extends Application {
 		return null;
 	}
 
-	public void showLogin() {
+	public void loadLogin() {
 		loadScene("login.fxml");
 		primaryStage.setTitle("Login");
-		primaryStage.show();
 	}
 
-	public void showGameLobby() {
+	public void loadGameLobby() {
 		loadScene("lobby.fxml");
-		socket.emit("state");
-		primaryStage.show();
 	}
 
-	public void showGameRoom(String roomName) {
+	public void loadGameRoom() {
 		loadScene("room.fxml");
-		socket.emit("state", roomName);
-		primaryStage.show();
 	}
 
 	public void connect(String URL) {
@@ -84,7 +80,7 @@ public class App extends Application {
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
-						showGameLobby();
+						socket.emit("state");
 					}
 				});	
 			}
@@ -101,7 +97,15 @@ public class App extends Application {
 			}
 		}).on("lobby", new Emitter.Listener() {
 			public void call(Object... args) {
-				if (primaryController.getClass().equals(GameLobbyController.class)) {
+				if (primaryController.getClass().equals(LoginController.class)) {
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							loadGameLobby();
+							((GameLobbyController)primaryController).updateState((JSONObject)args[0]);
+						}
+					});
+				} else if (primaryController.getClass().equals(GameLobbyController.class)) {
 					Platform.runLater(new Runnable() {
 						@Override
 						public void run() {
@@ -136,11 +140,12 @@ public class App extends Application {
 					Platform.runLater(new Runnable() {
 						@Override
 						public void run() {
-							try {
-								showGameRoom(((JSONObject)args[0]).getString("name"));
-							} catch (JSONException e) {}
-
+							loadGameRoom();
 							((GameRoomController)primaryController).updateState((JSONObject)args[0]);
+
+							try {
+								socket.emit("state", ((JSONObject)args[0]).getString("name"));
+							} catch (JSONException e) {}
 						}
 					});					
 				}
@@ -163,7 +168,7 @@ public class App extends Application {
 	public void disconnect() {
 		try {
 			this.socket.disconnect();
-			showLogin();
+			loadLogin();
 		} catch (Exception e) {}
 	}
 
