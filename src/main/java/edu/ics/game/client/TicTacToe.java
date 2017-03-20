@@ -1,5 +1,7 @@
 package edu.ics.game.client;
 
+import org.json.JSONObject;
+
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -34,5 +36,9 @@ public class TicTacToe extends Game {
 		}
 
 		return group;
+	}
+
+	public String createMessage(JSONObject state) {
+		return null;
 	}
 }

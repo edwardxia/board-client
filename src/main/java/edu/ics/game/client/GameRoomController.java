@@ -35,7 +35,6 @@ public class GameRoomController extends Controller {
 	private boolean gridInitialized = false;
 	private List<List<Pane>> panes = new ArrayList<>();
 	private GameStatusController gameStatusController = null;
-	@SuppressWarnings("unused")
 	private int playerIndex = -1;
 
 	@FXML
@@ -143,11 +142,10 @@ public class GameRoomController extends Controller {
 					JSONObject jsonGame = data.getJSONObject("game");
 					int rows = jsonGame.getInt("rows");
 					int columns = jsonGame.getInt("columns");
-					int bCount = 0;
-					int wCount = 0;
 
 					initializeGrid(columns, rows);
 					initializeGame(jsonGame.getString("name"));
+
 					JSONArray jsonBoard = jsonGame.getJSONArray("board");
 					for (int column = 0; column < columns; column++) {
 
@@ -155,103 +153,65 @@ public class GameRoomController extends Controller {
 						for (int row = 0; row < rows; row++) {
 
 							panes.get(column).get(row).getChildren().clear();
+
 							Node piece = game.createPiece(jsonRow.getInt(row), column, row);
 							if (piece != null) {
 								piece.setMouseTransparent(true);
 								panes.get(column).get(row).getChildren().add(piece);
 							}
-							if (data.getJSONObject("game").getString("name").equals("Othello")){
-								if (jsonRow.getInt(row) == 0) {
-									bCount += 1;
-								} else if (jsonRow.getInt(row) == 1) {
-									wCount += 1;
-								}
-							}
-							if (data.getJSONObject("game").getString("name").equals("Checkers")){
-								if (jsonRow.getInt(row) == 0 || jsonRow.getInt(row) == 4 || jsonRow.getInt(row) == 1) {
-									bCount += 1;
-								} else if (jsonRow.getInt(row) == 2 || jsonRow.getInt(row) == 6 || jsonRow.getInt(row) == 3) {
-									wCount += 1;
-								}
-							}
-							
 						}
 					}
-					
-					updateScore(data.getJSONObject("game").getString("name"), data, bCount, wCount);
 
 					if (gameStatusController != null) {
 						gameStatusController.updateItems(data.getJSONArray("players"));
 					}
+
 					if (data.has("playerIndex")) {
 						playerIndex = data.getInt("playerIndex");
 					}
-					String message;
-					if(jsonGame.getBoolean("ended")){
-						if (jsonGame.getInt("winner") == 0){
-							message = "Winner is " + data.getJSONArray("players").getJSONObject(0).getString("name");
-						}else if (jsonGame.getInt("winner") == 1){
-							message = "Winner is " + data.getJSONArray("players").getJSONObject(1).getString("name");
-						}else{
-							message = "No Winner / Tie";
+
+					message.setText(game.createMessage(data));
+
+					String alertMessage;
+					if (jsonGame.getBoolean("ended") && playerIndex >= 0) {
+						if (jsonGame.getInt("winner") < 0) {
+							alertMessage = "It's a tie!";
+						} else if (jsonGame.getInt("winner") == playerIndex) {
+							alertMessage = "You win!";
+						} else {
+							alertMessage = "You lose.";
 						}
-						AlertBox.display("Game Over", message);
+						AlertBox.display("Game Over", alertMessage);
+						playerIndex = -1;
 					}
-					
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 			}
 		});
 	}
-	
-	public void updateScore(String game, JSONObject data, int bScore, int wScore) {
-		try {
-			if (game.equals("Othello")) {
-				JSONArray players = data.getJSONArray("players");
-				if (players.length() == 2) {
-					message.setText(((players.getJSONObject(0).getString("name"))) + ": " + bScore+ "   " + 
-							players.getJSONObject(1).getString("name") + ": " + wScore);
-				} else {
-					message.setText("WAITING");
-				}
-			}
-			if (game.equals("Checkers")) {
-				JSONArray players = data.getJSONArray("players");
-				if (players.length() == 2) {
-					message.setText(((players.getJSONObject(0).getString("name"))) + ": " + bScore+ "   " + 
-							players.getJSONObject(1).getString("name") + ": " + wScore);
-				} else {
-					message.setText("WAITING");
-				}
-			}
-		}catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public static class AlertBox{
-		
+
+	public static class AlertBox {
 		public static void display(String title, String message){
 			Stage window = new Stage();
-			
+			window.setResizable(false);
+			window.setMinWidth(200);
 			window.initModality(Modality.APPLICATION_MODAL);
 			window.setTitle(title);
-			window.setMinWidth(500);
-			
+
 			Label label = new Label();
 			label.setText(message);
 			Button closeButton = new Button("Ok");
 			closeButton.setOnAction(e -> window.close());
-			
+
 			VBox layout = new VBox(10);
+			layout.setPadding(new Insets(20));
 			layout.getChildren().addAll(label, closeButton);
 			layout.setAlignment(Pos.CENTER);
-			
+
 			Scene scene = new Scene(layout);
 			window.setScene(scene);
 			window.showAndWait();
 		}
-		
 	}
 }
