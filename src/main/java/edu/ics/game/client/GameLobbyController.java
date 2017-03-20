@@ -85,7 +85,7 @@ public class GameLobbyController extends Controller {
 
 	private void updateRooms() {
 		try {
-			gameRoomStatusController.updateItems(state.getJSONArray("rooms"));
+			gameRoomStatusController.setItems(state.getJSONArray("rooms"));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -93,7 +93,7 @@ public class GameLobbyController extends Controller {
 
 	private void updatePlayers() {
 		try {
-			gamePlayerStatusController.updateItems(state.getJSONArray("players"));
+			gamePlayerStatusController.setItems(state.getJSONArray("players"));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -105,7 +105,7 @@ public class GameLobbyController extends Controller {
 			for (int i = 0; i < jsonRooms.length(); i++) {
 				JSONObject jsonRoom = jsonRooms.getJSONObject(i);
 				if (jsonRoom.getString("name").equals(roomName)) {
-					gamePlayerStatusController.updateItems(jsonRoom.getJSONArray("players"));
+					gamePlayerStatusController.setItems(jsonRoom.getJSONArray("players"));
 					break;
 				}
 			}

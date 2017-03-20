@@ -40,7 +40,11 @@ public class GameStatusController implements Initializable {
 		return tableView;
 	}
 
-	public void updateItems(JSONArray items) {
+	public ObservableList<Status> getItems() {
+		return items;
+	}
+
+	public void setItems(JSONArray items) {
 		this.items.clear();
 
 		try {

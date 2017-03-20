@@ -4,7 +4,7 @@ import javafx.fxml.Initializable;
 
 public abstract class Controller implements Initializable {
 	protected App app;
-	
+
 	public App getApp() {
 		return app;
 	}

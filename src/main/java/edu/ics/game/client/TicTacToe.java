@@ -12,7 +12,7 @@ import javafx.scene.shape.Rectangle;
 public class TicTacToe extends Game {
 	public Node createPiece(int piece, int column, int row) {
 		Group group = new Group();
-		
+
 		// A quick hack to ensure all have equal size.
 		Rectangle transparent = new Rectangle(0, 0, 160, 160);
 		transparent.setFill(Color.TRANSPARENT);

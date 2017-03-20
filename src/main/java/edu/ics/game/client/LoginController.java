@@ -56,7 +56,7 @@ public class LoginController extends Controller {
 
 		this.app.connect(URL);
 	}
-	
+
 	public void setError(String error) {
 		this.error.setText(error);
 		this.login.setDisable(false);

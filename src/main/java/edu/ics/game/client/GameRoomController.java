@@ -163,7 +163,11 @@ public class GameRoomController extends Controller {
 					}
 
 					if (gameStatusController != null) {
-						gameStatusController.updateItems(data.getJSONArray("players"));
+						gameStatusController.setItems(data.getJSONArray("players"));
+
+						if (data.getString("status").equals("PLAYING") && playerIndex == jsonGame.getInt("turn")) {
+							gameStatusController.getItems().get(playerIndex).setStatus("YOUR TURN");
+						}
 					}
 
 					if (data.has("playerIndex")) {
