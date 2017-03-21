@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -78,9 +79,24 @@ public class GameLobbyController extends Controller {
 	}
 
 	public void updateState(JSONObject data) {
-		this.state = data;
-		this.updateRooms();
-		this.updatePlayers();
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				updateTitle(data);
+				state = data;
+				updateRooms();
+				updatePlayers();
+			}
+		});
+
+	}
+
+	private void updateTitle(JSONObject data) {
+		try {
+			app.getPrimaryStage().setTitle(data.getString("name") + " - Lobby");
+		} catch (JSONException e) {
+			app.getPrimaryStage().setTitle("Game - Lobby");
+		}
 	}
 
 	private void updateRooms() {

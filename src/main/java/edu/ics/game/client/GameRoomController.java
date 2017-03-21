@@ -139,6 +139,8 @@ public class GameRoomController extends Controller {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
+				updateTitle(data);
+
 				try {
 					JSONObject jsonGame = data.getJSONObject("game");
 					int rows = jsonGame.getInt("rows");
@@ -194,6 +196,15 @@ public class GameRoomController extends Controller {
 				}
 			}
 		});
+	}
+
+	private void updateTitle(JSONObject data) {
+		try {
+			String title = (data).getJSONObject("game").getString("name") + " - Room - " + (data).getString("name");
+			app.getPrimaryStage().setTitle(title);
+		} catch (JSONException e) {
+			app.getPrimaryStage().setTitle("Game - Room");
+		}
 	}
 
 	public void displayAlert(String title, String message) {
