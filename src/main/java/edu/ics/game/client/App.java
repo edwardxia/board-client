@@ -103,6 +103,12 @@ public class App extends Application {
 						public void run() {
 							loadGameLobby();
 							((GameLobbyController)primaryController).updateState((JSONObject)args[0]);
+
+							try {
+								primaryStage.setTitle(((JSONObject)args[0]).getString("name") + " - Lobby");
+							} catch (JSONException e) {
+								primaryStage.setTitle("Game - Lobby");
+							}
 						}
 					});
 				} else if (primaryController.getClass().equals(GameLobbyController.class)) {
@@ -128,6 +134,13 @@ public class App extends Application {
 						public void run() {
 							loadGameRoom();
 							((GameRoomController)primaryController).updateState((JSONObject)args[0]);
+
+							try {
+								String title = ((JSONObject)args[0]).getJSONObject("game").getString("name") + " - Room - " + ((JSONObject)args[0]).getString("name");
+								primaryStage.setTitle(title);
+							} catch (JSONException e) {
+								primaryStage.setTitle("Game - Room");
+							}
 						}
 					});
 				} else if (primaryController.getClass().equals(GameRoomController.class)) {
