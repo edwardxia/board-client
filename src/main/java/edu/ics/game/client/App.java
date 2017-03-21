@@ -2,7 +2,6 @@ package edu.ics.game.client;
 
 import java.net.URISyntaxException;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.socket.client.IO;
