@@ -178,7 +178,7 @@ public class GameRoomController extends Controller {
 					message.setText(game.createMessage(data));
 
 					String alertMessage;
-					if (jsonGame.getBoolean("ended") && playerIndex >= 0) {
+					if (jsonGame.getBoolean("ended") && playerIndex >= 0 && playerIndex <= 1) {
 						if (jsonGame.getInt("winner") < 0) {
 							alertMessage = "It's a tie!";
 						} else if (jsonGame.getInt("winner") == playerIndex) {
